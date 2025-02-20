@@ -4,17 +4,24 @@
     import 'swiper/css';
     import 'swiper/css/effect-fade';
     import 'swiper/css/pagination';
-    
-    const listSlide=[
-        {
-            image:'/src/assets/imgs/slide1.jpg',
-            title:'title 1'
-        },
-        {
-            image:'/src/assets/imgs/slide2.jpg',
-            title:'title 2'
+    import { onMounted, reactive, ref } from 'vue';
+    const state=reactive({
+        products:[],
+        isLoading:true
+    })
+    onMounted(async()=>{
+        try {
+            const res=await fetch('https://fakestoreapi.com/products',{
+            method:'GET'
+            })
+            state.products=await res.json()
+            
+        } catch (error) {
+            console.log(error);
+        }    finally{
+            state.isLoading=false
         }
-    ]
+    })
 </script>
 <template>
     <div class="popular-product my-10">
@@ -34,8 +41,8 @@
                     loop="true"
 
             >
-                <swiper-slide v-for="(slide,index) in listSlide" :key="index" class="max-h-[400px] w-full overflow-hidden rounded-2xl ">
-                    <img :src="slide.image" :alt="slide.image" class="w-full h-full object-cover">
+                <swiper-slide v-for="(slide,index) in state.products" :key="index" class="max-h-[400px] w-full overflow-hidden rounded-2xl bg-white">
+                    <img :src="slide.image" :alt="slide.image" class="w-auto h-full object-contain mx-auto">
                 </swiper-slide>
             </swiper>
         </div>
@@ -44,14 +51,14 @@
 
 <style lang="css">
     .popular-product .swiper-pagination-bullet{
-        background: white !important;
+        background: #EFEFEF !important;
         opacity: .3 !important;
         width: 16px;
         height: 16px;
         
     }
     .popular-product .swiper-pagination-bullet-active{
-        background: white !important;
+        background: #EFEFEF!important;
         opacity: 1 !important;
         
     }

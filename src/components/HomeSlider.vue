@@ -1,4 +1,5 @@
 <script setup>
+    import GridLoader from 'vue-spinner/src/GridLoader.vue'
     import {Swiper,SwiperSlide} from 'swiper/vue';
     import { EffectFade,Pagination } from 'swiper/modules';
     import 'swiper/css';
@@ -15,12 +16,12 @@
             method:'GET'
             })
             state.products=await res.json()
+            state.isLoading=false
             
         } catch (error) {
             console.log(error);
-        }    finally{
             state.isLoading=false
-        }
+        }  
     })
 </script>
 <template>
@@ -31,20 +32,26 @@
             </h3>
             <swiper
                     :modules="[EffectFade,Pagination]"
-                     effect="fade"
+                    effect="fade"
+                    :auto-height='true'
                     :slides-per-view="1"
                     :space-between="50"
                     :pagination="{clickable:true}" 
                     class="max-w-full w-full"
-                    autoplay="true"
-                    center-insufficient-slides="true"
-                    loop="true"
+                    :autoplay='true'
+                    :center-insufficient-slides='true'
+                    :loop='true'
+                    :v-show="!state.isLoading"
 
             >
                 <swiper-slide v-for="(slide,index) in state.products" :key="index" class="max-h-[400px] w-full overflow-hidden rounded-2xl bg-white">
                     <img :src="slide.image" :alt="slide.image" class="w-auto h-full object-contain mx-auto">
                 </swiper-slide>
             </swiper>
+            <div class="flex justify-center" :v-show="state.isLoading">
+                <GridLoader :loading="state.isLoading" size="14px"></GridLoader>
+            </div>
+
         </div>
     </div>
 </template>
